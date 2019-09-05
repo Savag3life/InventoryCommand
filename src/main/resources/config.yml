@@ -1,0 +1,44 @@
+Settings:
+  #Color Each Word, Json Color Reset on A new Line, Coloring Each Line Allowed for Multiple Line color support.
+  ReplaceMessage: '&c&o{players} &c&oinventory'
+  MenuTitle: '&c&lInventory View'
+  HoverText: '&cClick To View {players} Inventory!'
+  #[inventory] usage cooldown in seconds.
+  Cooldown: 20
+InfoItem:
+  # This lore can use any placeholder from PlaceholderAPI
+  # https://www.spigotmc.org/wiki/placeholderapi-placeholders/
+  Lore:
+  - ''
+  - '&c&l* &fBalance: &c%vault_eco_balance_formatted%'
+  - '&c&l* &fFaction: &c%rel_factionsuuid_relation_color%%factionsuuid_faction_name%'
+  - ''
+  Name: '&cPlayer Stats:'
+  Type: NAME_TAG
+  Size: 1
+  Damage: 0
+  #Yes, I did steal DeluxeChats Config form. Sue me.
+Format:
+  channel: ''
+  prefix: '&8[%rel_factionsuuid_relation_color%%factions_role%%mvdw_factionsuuid_faction_name%&8] %deluxetags_tag%&r &8[ %vault_rankprefix% &8] '
+  name_color: ''
+  name: '%player_name%'
+  suffix: '&8 » '
+  chat_color: '&f'
+  channel_tooltip:
+  - ''
+  prefix_tooltip:
+  - '&6&lName: %player_displayname%'
+  - '&c&lFaction: %rel_factionsuuid_relation_color%%mvdw_factionsuuid_faction_name%'
+  - '&a&lBalance: &f&o%vault_eco_balance_formatted%'
+  name_tooltip:
+  - '&7&oClick here to send a PM'
+  suffix_tooltip:
+  - ''
+  channel_click_command: ''
+  prefix_click_command: '/f show %player% '
+  name_click_command: '/msg %player% '
+  suffix_click_command: ''
+Messages:
+  Cooldown: '&c[!] You can only use [brag] once every 20 seconds!'
+  NoAccess: '&c[!] You cannot view this players inventory! Ask them to [brag]!'

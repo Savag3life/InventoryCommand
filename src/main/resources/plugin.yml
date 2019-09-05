@@ -1,0 +1,9 @@
+main: life.savag3.InventoryCommand.Main
+version: 1.5
+name: InventoryCommand
+author: Savag3life
+depend: [PlaceholderAPI]
+softdepend: [DeluxeChat]
+commands:
+  seeinv:
+    description: See Players Inventory
