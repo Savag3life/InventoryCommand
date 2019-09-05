@@ -1,5 +1,6 @@
 package life.savag3.InventoryCommand;
 
+import com.github.stefvanschie.inventoryframework.Gui;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -28,6 +29,7 @@ import java.util.List;
 public class Main extends JavaPlugin implements Listener {
 
     private List<Player> history = new ArrayList<>();
+    private Gui defaultGui;
     public static Main main;
     public boolean deluxeChat = false;
 
@@ -50,12 +52,12 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
         Bukkit.getPluginManager().registerEvents(this, this);
+        defaultGui = new Gui( this, 45, color(getConfig().getString("Settings.MenuTitle")));
+
     }
 
     @Override
-    public void onDisable() {
-
-    }
+    public void onDisable() { }
 
     public void suicide() {
         Bukkit.getPluginManager().disablePlugin(this);
@@ -243,23 +245,6 @@ public class Main extends JavaPlugin implements Listener {
             }
         return false;
     }
-
-    @EventHandler
-    public void onClick(InventoryClickEvent e) {
-        if (e.getClickedInventory() == null || e.getClickedInventory().getTitle() == null || e.getCurrentItem() == null || e.getCurrentItem().getItemMeta() == null || e.getCursor() == null) return;
-        if (e.getClickedInventory().getTitle().equals(color(getConfig().getString("Settings.MenuTitle"))))
-            e.setCancelled(true);
-    }
-
-
-    @EventHandler
-    public void onShiftClick(InventoryClickEvent e) {
-        if (e.getClickedInventory() == null || e.getClickedInventory().getTitle() == null || e.getCurrentItem() == null || e.getCurrentItem().getItemMeta() == null || e.getCursor() == null) return;
-        if (e.getClickedInventory().getTitle().equals(color(getConfig().getString("Settings.MenuTitle"))))
-            e.setCancelled(true);
-    }
-
-
 
     private Inventory getBuiltInventory(Player p, Player p2) {
         Inventory inv = Bukkit.createInventory(null, 45, color(getConfig().getString("Settings.MenuTitle")));
