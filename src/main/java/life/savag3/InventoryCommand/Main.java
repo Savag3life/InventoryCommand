@@ -1,6 +1,8 @@
 package life.savag3.InventoryCommand;
 
 import com.github.stefvanschie.inventoryframework.Gui;
+import com.github.stefvanschie.inventoryframework.GuiItem;
+import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -15,9 +17,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -29,9 +29,10 @@ import java.util.List;
 public class Main extends JavaPlugin implements Listener {
 
     private List<Player> history = new ArrayList<>();
-    private Gui defaultGui;
-    public static Main main;
-    public boolean deluxeChat = false;
+    private FileConfiguration config;
+    private boolean deluxeChat = false;
+
+    static Main main;
 
     @Override
     public void onEnable() {
@@ -45,6 +46,7 @@ public class Main extends JavaPlugin implements Listener {
         }
 
         SettingsManager.getInstance().setup(this);
+        config = SettingsManager.getInstance().getConfig();
 
         if (!(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))) {
             Bukkit.getLogger().info("InventoryCommand could not find PlaceholderAPI, Disabling!");
@@ -52,12 +54,11 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
         Bukkit.getPluginManager().registerEvents(this, this);
-        defaultGui = new Gui( this, 45, color(getConfig().getString("Settings.MenuTitle")));
-
     }
 
     @Override
-    public void onDisable() { }
+    public void onDisable() {
+    }
 
     public void suicide() {
         Bukkit.getPluginManager().disablePlugin(this);
@@ -72,9 +73,6 @@ public class Main extends JavaPlugin implements Listener {
         Bukkit.getScheduler().runTaskLater(this, () -> removePlayer(p), getConfig().getInt("Settings.Cooldown") * 20);
     }
 
-    @Override
-    public FileConfiguration getConfig() { return SettingsManager.getInstance().getConfig(); }
-
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
         if (ChatColor.stripColor(e.getMessage()).contains("[inventory]") || ChatColor.stripColor(e.getMessage()).contains("[brag]")) {
@@ -86,14 +84,14 @@ public class Main extends JavaPlugin implements Listener {
                 }
                 if (deluxeChat) {
                     for (Player p : Bukkit.getOnlinePlayers()) {
-                        TextComponent Message = new TextComponent(getDeluxeFormat(e.getPlayer(), p));
+                        TextComponent Message = new TextComponent(getFormat(e.getPlayer(), p, SettingsManager.getInstance().getDconfig()));
                         Message.addExtra(buildMessage(e.getMessage(), e.getPlayer()));
                         p.spigot().sendMessage(Message);
                     }
                     addPlayer(e.getPlayer());
                 } else {
                     for (Player p : Bukkit.getOnlinePlayers()) {
-                        TextComponent Message = new TextComponent(getDefaultFormat(e.getPlayer(), p));
+                        TextComponent Message = new TextComponent(getFormat(e.getPlayer(), p, SettingsManager.getInstance().getConfig()));
                         Message.addExtra(buildMessage(e.getMessage(), e.getPlayer()));
                         p.spigot().sendMessage(Message);
                     }
@@ -103,48 +101,8 @@ public class Main extends JavaPlugin implements Listener {
         }
     }
 
-    private TextComponent getDefaultFormat(Player player, Player player2) {
-        FileConfiguration d = getConfig();
+    private TextComponent getFormat(Player player, Player player2, FileConfiguration d) {
         String p = "Format.";
-
-        String channel = d.getString(p + "channel");
-        String prefix = d.getString(p + "prefix");
-        String nameColor = d.getString(p + "name_color");
-        String name = d.getString(p + "name");
-        String suffix = d.getString(p + "suffix");
-        String chatColor = d.getString(p + "chat_color");
-
-        List<String> channelTooltip = d.getStringList(p + "prefix_tooltip");
-        List<String> prefixTooltip = d.getStringList(p + "prefix_tooltip");
-        List<String> nameTooltip = d.getStringList(p + "prefix_tooltip");
-        List<String> suffixTooltip = d.getStringList(p + "prefix_tooltip");
-
-        String channelCommand = d.getString(p + "channel_click_command");
-        String prefixCommand = d.getString(p + "prefix_click_command");
-        String nameCommand = d.getString(p + "name_click_command");
-        String suffixCommand = d.getString(p + "suffix_click_command");
-
-        TextComponent channelComp = buildComp(channel, channelTooltip, channelCommand, player, player2);
-        TextComponent prefixComp = buildComp(prefix, prefixTooltip, prefixCommand, player, player2);
-        TextComponent nameComp = buildComp(nameColor + name, nameTooltip, nameCommand, player, player2);
-        TextComponent suffixComp = buildComp(suffix + chatColor, suffixTooltip, suffixCommand, player, player2);
-
-        TextComponent message = new TextComponent(channelComp);
-        message.addExtra(prefixComp);
-        message.addExtra(nameComp);
-        message.addExtra(suffixComp);
-
-        TextComponent reset = new TextComponent("");
-        reset.setHoverEvent(null);
-        reset.setClickEvent(null);
-        message.addExtra(reset);
-
-        return message;
-    }
-
-    private TextComponent getDeluxeFormat(Player player, Player player2) {
-        FileConfiguration d = SettingsManager.getInstance().getDconfig();
-        String p = "formats.default.";
 
         String channel = d.getString(p + "channel");
         String prefix = d.getString(p + "prefix");
@@ -184,11 +142,11 @@ public class Main extends JavaPlugin implements Listener {
     private TextComponent buildMessage(String msg1, Player p) {
         String msg = msg1.replace("[inventory]", " ; ");
         String[] args = msg.split(";");
-        String inv = color(getConfig().getString("Settings.ReplaceMessage").replace("{players}", p.getName()));
+        String inv = color(config.getString("Settings.ReplaceMessage").replace("{players}", p.getName()));
         TextComponent invPart = new TextComponent(inv);
-        String hoverText = color(getConfig().getString("Settings.HoverText").replace("{players}", p.getName()));
+        String hoverText = color(config.getString("Settings.HoverText").replace("{players}", p.getName()));
         invPart.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hoverText).create()));
-        invPart.setClickEvent( new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/seeinv " + p.getName()));
+        invPart.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/seeinv " + p.getName()));
 
         if (args[0] == null) args[0] = " ";
         TextComponent message = new TextComponent(color(args[0]));
@@ -211,7 +169,7 @@ public class Main extends JavaPlugin implements Listener {
         for (int i = 0; i <= tool.size() - 1; i++) {
             tool.set(i, color(tool.get(i)));
             tool.set(i, PlaceholderAPI.setPlaceholders(p, tool.get(i)));
-            tool.set(i,  PlaceholderAPI.setRelationalPlaceholders(p, p2, tool.get(i)));
+            tool.set(i, PlaceholderAPI.setRelationalPlaceholders(p, p2, tool.get(i)));
             line = line + "\n" + tool.get(i);
         }
 
@@ -229,7 +187,7 @@ public class Main extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (label.equalsIgnoreCase("seeinv")) {
             if (!history.contains(Bukkit.getPlayer(args[0]))) {
-                sender.sendMessage(color(getConfig().getString("Messages.NoAccess")));
+                sender.sendMessage(color(config.getString("Messages.NoAccess")));
                 return true;
             }
 
@@ -238,50 +196,63 @@ public class Main extends JavaPlugin implements Listener {
                 return true;
             }
 
-            Inventory inv = getBuiltInventory(Bukkit.getPlayer(args[0]), (Player) sender);
-            Player p = (Player) sender;
-            p.openInventory(inv);
+            displayInventory(Bukkit.getPlayer(args[0]), (Player) sender);
             return true;
-            }
+        }
         return false;
     }
 
-    private Inventory getBuiltInventory(Player p, Player p2) {
-        Inventory inv = Bukkit.createInventory(null, 45, color(getConfig().getString("Settings.MenuTitle")));
-        PlayerInventory pi = p.getInventory();
-            for (int x = 0; x <= 35; x++) {
-                if (pi.getItem(x) == null || pi.getItem(x).getType() == Material.AIR) continue;
-                inv.setItem(x, pi.getItem(x));
-            }
-                ItemStack tag = new ItemStack(Material.getMaterial(getConfig().getString("InfoItem.Type")), getConfig().getInt("InfoItem.Size"), (short) getConfig().getInt("InfoItem.Damage"));
-                ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7);
-                List<String> tagLore = getConfig().getStringList("InfoItem.Lore");
-                ItemMeta meta = tag.getItemMeta();
-                    int count = 0;
-                    for (String line : tagLore) {
-                        String msg = PlaceholderAPI.setPlaceholders(p, line);
-                        String msg2 = PlaceholderAPI.setRelationalPlaceholders(p, p2, msg);
-                        tagLore.set(count, color(msg2));
-                        count++;
-                    }
-                meta.setLore(tagLore);
-                meta.setDisplayName(color(getConfig().getString("InfoItem.Name")));
-                tag.setItemMeta(meta);
+    private void displayInventory(Player inQuestion, Player sender) {
+        Gui inv = new Gui(this, 45, color(config.getString("Settings.MenuTitle")));
 
-                inv.setItem(36, glass);
+        PaginatedPane pane = new PaginatedPane(0, 0, 9, inv.getRows());
+        List<GuiItem> GUIItems = new ArrayList<>();
+        ItemStack dumby = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7);
 
-                inv.setItem(37, pi.getHelmet());
-                inv.setItem(38, pi.getChestplate());
-                inv.setItem(39, pi.getLeggings());
-                inv.setItem(40, pi.getBoots());
 
-                inv.setItem(41, glass);
-                inv.setItem(42, glass);
-                inv.setItem(44, glass);
+        PlayerInventory pi = inQuestion.getInventory();
 
-                inv.setItem(43, tag);
+        for (int x = 0; x <= 35; x++) {
+            if (pi.getItem(x) == null || pi.getItem(x).getType() == Material.AIR) continue;
+            GUIItems.set(x, new GuiItem(pi.getItem(x), e -> e.setCancelled(true)));
+        }
 
-        return inv;
+        ItemStack tag = new ItemStack(
+                Material.getMaterial(config.getString("InfoItem.Type")),
+                config.getInt("InfoItem.Size"),
+                (short) config.getInt("InfoItem.Damage"));
 
+        List<String> tagLore = config.getStringList("InfoItem.Lore");
+        ItemMeta meta = tag.getItemMeta();
+
+        int count = 0;
+        for (String line : tagLore) {
+            String msg = PlaceholderAPI.setPlaceholders(sender, line);
+            String msg2 = PlaceholderAPI.setRelationalPlaceholders(sender, inQuestion, msg);
+            tagLore.set(count, color(msg2));
+            count++;
+        }
+
+        meta.setLore(tagLore);
+        meta.setDisplayName(color(config.getString("InfoItem.Name")));
+        tag.setItemMeta(meta);
+
+        GUIItems.set(36, new GuiItem(dumby, e -> e.setCancelled(true)));
+
+        GUIItems.set(37, new GuiItem(pi.getHelmet(), e -> e.setCancelled(true)));
+        GUIItems.set(38, new GuiItem(pi.getChestplate(), e -> e.setCancelled(true)));
+        GUIItems.set(39, new GuiItem(pi.getLeggings(), e -> e.setCancelled(true)));
+        GUIItems.set(40, new GuiItem(pi.getBoots(), e -> e.setCancelled(true)));
+
+        GUIItems.set(41, new GuiItem(dumby, e -> e.setCancelled(true)));
+        GUIItems.set(42, new GuiItem(dumby, e -> e.setCancelled(true)));
+        GUIItems.set(44, new GuiItem(dumby, e -> e.setCancelled(true)));
+
+        GUIItems.set(43, new GuiItem(tag, e -> e.setCancelled(true)));
+
+        pane.populateWithGuiItems(GUIItems);
+        inv.addPane(pane);
+        inv.update();
+        inv.show(sender);
     }
 }
