@@ -103,7 +103,6 @@ public class Main extends JavaPlugin implements Listener {
 
     private TextComponent getDefaultFormat(Player player, Player player2) {
         FileConfiguration d = getConfig();
-        Bukkit.getLogger().info("Default Format");
         String p = "Format.";
 
         String channel = d.getString(p + "channel");
@@ -143,7 +142,6 @@ public class Main extends JavaPlugin implements Listener {
 
     private TextComponent getDeluxeFormat(Player player, Player player2) {
         FileConfiguration d = SettingsManager.getInstance().getDconfig();
-        Bukkit.getLogger().info("DChat Format");
         String p = "formats.default.";
 
         String channel = d.getString(p + "channel");
