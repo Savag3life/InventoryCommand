@@ -219,7 +219,7 @@ public class Main extends JavaPlugin implements Listener {
 
         PaginatedPane pane = new PaginatedPane(0, 0, 9, inv.getRows());
         List<GuiItem> GUIItems = new ArrayList<>();
-        ItemStack dumby = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7);
+        ItemStack dumby = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1, (short) 7);
 
 
         PlayerInventory pi = inQuestion.getInventory();
@@ -251,10 +251,10 @@ public class Main extends JavaPlugin implements Listener {
 
         GUIItems.set(36, new GuiItem(dumby, e -> e.setCancelled(true)));
 
-        GUIItems.set(37, new GuiItem(pi.getHelmet(), e -> e.setCancelled(true)));
-        GUIItems.set(38, new GuiItem(pi.getChestplate(), e -> e.setCancelled(true)));
-        GUIItems.set(39, new GuiItem(pi.getLeggings(), e -> e.setCancelled(true)));
-        GUIItems.set(40, new GuiItem(pi.getBoots(), e -> e.setCancelled(true)));
+        GUIItems.set(37, new GuiItem(pi.getHelmet() == null ? pi.getHelmet() : new ItemStack(Material.AIR), e -> e.setCancelled(true)));
+        GUIItems.set(38, new GuiItem(pi.getChestplate() == null ? pi.getChestplate() : new ItemStack(Material.AIR), e -> e.setCancelled(true)));
+        GUIItems.set(39, new GuiItem(pi.getLeggings() == null ? pi.getLeggings() : new ItemStack(Material.AIR), e -> e.setCancelled(true)));
+        GUIItems.set(40, new GuiItem(pi.getBoots() == null ? pi.getBoots() : new ItemStack(Material.AIR), e -> e.setCancelled(true)));
 
         GUIItems.set(41, new GuiItem(dumby, e -> e.setCancelled(true)));
         GUIItems.set(42, new GuiItem(dumby, e -> e.setCancelled(true)));
