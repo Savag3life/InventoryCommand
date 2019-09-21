@@ -84,7 +84,7 @@ public class Main extends JavaPlugin implements Listener {
                 }
                 if (deluxeChat) {
                     for (Player p : Bukkit.getOnlinePlayers()) {
-                        TextComponent Message = new TextComponent(getFormat(e.getPlayer(), p, SettingsManager.getInstance().getDconfig()));
+                        TextComponent Message = new TextComponent(getFormat(e.getPlayer(), p, SettingsManager.getInstance().getDConfig()));
                         Message.addExtra(buildMessage(e.getMessage(), e.getPlayer()));
                         p.spigot().sendMessage(Message);
                     }
