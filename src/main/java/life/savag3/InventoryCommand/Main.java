@@ -38,10 +38,10 @@ public class Main extends JavaPlugin implements Listener {
     public void onEnable() {
         main = this;
         if (Bukkit.getPluginManager().isPluginEnabled("DeluxeChat")) {
+            log(" Found DeluxeChat, using DChat formatting.");
             deluxeChat = true;
         } else {
-            Bukkit.getLogger().info("Couldn't Find DeluxeChat");
-            Bukkit.getLogger().info("Defaulting to config.yml settings!");
+            log("Couldn't Find DeluxeChat.. defaulting to config.yml settings.");
             deluxeChat = false;
         }
 
@@ -49,7 +49,7 @@ public class Main extends JavaPlugin implements Listener {
         config = SettingsManager.getInstance().getConfig();
 
         if (!(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))) {
-            Bukkit.getLogger().info("InventoryCommand could not find PlaceholderAPI, Disabling!");
+            log("PlaceHolderAPI was not found. This is a required dependency.. Disabling!");
             suicide();
             return;
         }
@@ -60,7 +60,7 @@ public class Main extends JavaPlugin implements Listener {
     public void onDisable() {
     }
 
-    public void suicide() {
+    private void suicide() {
         Bukkit.getPluginManager().disablePlugin(this);
     }
 
@@ -165,15 +165,15 @@ public class Main extends JavaPlugin implements Listener {
         TextComponent channel = new TextComponent(cleaned);
         channel.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
 
-        String line = "";
+        StringBuilder line = new StringBuilder();
         for (int i = 0; i <= tool.size() - 1; i++) {
             tool.set(i, color(tool.get(i)));
             tool.set(i, PlaceholderAPI.setPlaceholders(p, tool.get(i)));
             tool.set(i, PlaceholderAPI.setRelationalPlaceholders(p, p2, tool.get(i)));
-            line = line + "\n" + tool.get(i);
+            line.append("\n").append(tool.get(i));
         }
 
-        channel.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(line).create()));
+        channel.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(line.toString()).create()));
 
         return channel;
     }
@@ -254,5 +254,9 @@ public class Main extends JavaPlugin implements Listener {
         inv.addPane(pane);
         inv.update();
         inv.show(sender);
+    }
+
+    private void log(String message) {
+        Bukkit.getLogger().info("[InventoryCommand] " + message);
     }
 }
