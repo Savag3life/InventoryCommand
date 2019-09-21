@@ -185,9 +185,21 @@ public class Main extends JavaPlugin implements Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (label.equals("invreload")) {
+            if (sender.hasPermission("inventorycommand.reload")) {
+                SettingsManager.getInstance().reloadConfig();
+                this.config = SettingsManager.getInstance().getConfig();
+                sender.sendMessage(color(this.config.getString("Messages.Reloaded")));
+                return true;
+            } else {
+                sender.sendMessage(color(this.config.getString("Messages.NoPermission")));
+                return true;
+            }
+        }
+
         if (label.equalsIgnoreCase("seeinv")) {
             if (!history.contains(Bukkit.getPlayer(args[0]))) {
-                sender.sendMessage(color(config.getString("Messages.NoAccess")));
+                sender.sendMessage(color(this.config.getString("Messages.NoAccess")));
                 return true;
             }
 

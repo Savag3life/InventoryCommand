@@ -41,4 +41,6 @@ Format:
   suffix_click_command: ''
 Messages:
   Cooldown: '&c[!] You can only use [brag] once every 20 seconds!'
+  Reload: '&a[!] Inventory Command was reloaded!'
+  NoPermission: '&c[!] You don''t have permission to access this feature!'
   NoAccess: '&c[!] You cannot view this players inventory! Ask them to [brag]!'

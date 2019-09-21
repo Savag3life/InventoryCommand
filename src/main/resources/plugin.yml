@@ -6,4 +6,6 @@ depend: [PlaceholderAPI]
 softdepend: [DeluxeChat]
 commands:
   seeinv:
-    description: See Players Inventory
+    description: See Players Inventory.
+  invreload:
+    description: Reload plugin config.
