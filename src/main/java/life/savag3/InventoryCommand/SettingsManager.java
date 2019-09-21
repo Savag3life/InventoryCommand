@@ -19,10 +19,10 @@ public class SettingsManager {
             return instance;
         }
 
-        FileConfiguration config;
-        FileConfiguration dconfig;
+        private FileConfiguration config;
+        private FileConfiguration dconfig;
 
-        File ConfigFile;
+        private File ConfigFile;
 
         public void setup(Plugin p) {
 

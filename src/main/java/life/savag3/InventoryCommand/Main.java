@@ -30,7 +30,7 @@ public class Main extends JavaPlugin implements Listener {
 
     private List<Player> history = new ArrayList<>();
     private FileConfiguration config;
-    private boolean deluxeChat = false;
+    public boolean deluxeChat = false;
 
     static Main main;
 
@@ -60,7 +60,7 @@ public class Main extends JavaPlugin implements Listener {
     public void onDisable() {
     }
 
-    private void suicide() {
+    public void suicide() {
         Bukkit.getPluginManager().disablePlugin(this);
     }
 
