@@ -86,27 +86,19 @@ public class Main extends JavaPlugin implements Listener {
                     e.setMessage(color(getConfig().getString("Messages.Cooldown")));
                     return;
                 }
-                if (deluxeChat) {
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        TextComponent Message = new TextComponent(getFormat(e.getPlayer(), p, SettingsManager.getInstance().getDConfig()));
-                        Message.addExtra(buildMessage(e.getMessage(), e.getPlayer()));
-                        p.spigot().sendMessage(Message);
-                    }
-                    addPlayer(e.getPlayer());
-                } else {
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        TextComponent Message = new TextComponent(getFormat(e.getPlayer(), p, SettingsManager.getInstance().getConfig()));
-                        Message.addExtra(buildMessage(e.getMessage(), e.getPlayer()));
-                        p.spigot().sendMessage(Message);
-                    }
-                    addPlayer(e.getPlayer());
+
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    TextComponent Message = new TextComponent(getFormat(e.getPlayer(), p, SettingsManager.getInstance().getDConfig(), deluxeChat));
+                    Message.addExtra(buildMessage(e.getMessage(), e.getPlayer()));
+                    p.spigot().sendMessage(Message);
                 }
+                addPlayer(e.getPlayer());
             }
         }
     }
 
-    private TextComponent getFormat(Player player, Player player2, FileConfiguration d) {
-        String p = "Format.";
+    private TextComponent getFormat(Player player, Player player2, FileConfiguration d, boolean dchat) {
+        String p = dchat ? "formats.default." : "Format.";
 
         String channel = d.getString(p + "channel");
         String prefix = d.getString(p + "prefix");
@@ -220,11 +212,11 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     private void displayInventory(Player inQuestion, Player sender) {
-        Gui inv = new Gui(this, 45, color(config.getString("Settings.MenuTitle")));
+        Gui inv = new Gui(this, 5, color(config.getString("Settings.MenuTitle")));
 
         PaginatedPane pane = new PaginatedPane(0, 0, 9, inv.getRows());
         List<GuiItem> GUIItems = new ArrayList<>();
-        ItemStack dumby = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1, (short) 7);
+        ItemStack dumby = new ItemStack(XMaterial.BLACK_STAINED_GLASS_PANE.parseMaterial(), 1, (short) 7);
 
 
         PlayerInventory pi = inQuestion.getInventory();
