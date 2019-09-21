@@ -216,8 +216,9 @@ public class Main extends JavaPlugin implements Listener {
 
         PaginatedPane pane = new PaginatedPane(0, 0, 9, inv.getRows());
         List<GuiItem> GUIItems = new ArrayList<>();
-        ItemStack dumby = new ItemStack(XMaterial.BLACK_STAINED_GLASS_PANE.parseMaterial(), 1, (short) 7);
+        ItemStack dumby = new ItemStack(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem());
 
+        for (int x = 0; x <= 44; x++) GUIItems.add(x, new GuiItem(XMaterial.AIR.parseItem(), e -> e.setCancelled(true)));
 
         PlayerInventory pi = inQuestion.getInventory();
 
