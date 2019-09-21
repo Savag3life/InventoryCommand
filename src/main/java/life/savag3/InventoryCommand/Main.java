@@ -30,6 +30,7 @@ public class Main extends JavaPlugin implements Listener {
 
     private List<Player> history = new ArrayList<>();
     private FileConfiguration config;
+    private FileConfiguration dchat;
     public boolean deluxeChat = false;
 
     static Main main;
@@ -37,16 +38,19 @@ public class Main extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         main = this;
+
+        SettingsManager.getInstance().setup(this);
+        config = SettingsManager.getInstance().getConfig();
+
         if (Bukkit.getPluginManager().isPluginEnabled("DeluxeChat")) {
-            log(" Found DeluxeChat, using DChat formatting.");
             deluxeChat = true;
+            log(" Found DeluxeChat, using Attempting to get DChat formatting.");
+            dchat = SettingsManager.getInstance().getDConfig();
+            if (dchat == null) log("DChat Config was null");
         } else {
             log("Couldn't Find DeluxeChat.. defaulting to config.yml settings.");
             deluxeChat = false;
         }
-
-        SettingsManager.getInstance().setup(this);
-        config = SettingsManager.getInstance().getConfig();
 
         if (!(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))) {
             log("PlaceHolderAPI was not found. This is a required dependency.. Disabling!");
@@ -188,6 +192,7 @@ public class Main extends JavaPlugin implements Listener {
         if (label.equals("invreload")) {
             if (sender.hasPermission("inventorycommand.reload")) {
                 SettingsManager.getInstance().reloadConfig();
+                SettingsManager.getInstance().reloadDChatConfig();
                 this.config = SettingsManager.getInstance().getConfig();
                 sender.sendMessage(color(this.config.getString("Messages.Reloaded")));
                 return true;

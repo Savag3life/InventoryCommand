@@ -23,6 +23,7 @@ public class SettingsManager {
         private FileConfiguration dconfig;
 
         private File ConfigFile;
+        private File DChatFile;
 
         public void setup(Plugin p) {
             if (!p.getDataFolder().exists()) p.getDataFolder().mkdir();
@@ -43,15 +44,19 @@ public class SettingsManager {
 
             config = YamlConfiguration.loadConfiguration(ConfigFile);
 
-            if (Main.main.deluxeChat) dconfig = Bukkit.getPluginManager().getPlugin("DeluxeChat").getConfig();
-
+            if (Main.main.deluxeChat) return;
+            DChatFile = new File("plugins/DeluxeChat/config.yml");
+            if (!DChatFile.exists()) return;
+            dconfig = YamlConfiguration.loadConfiguration(DChatFile);
         }
 
         FileConfiguration getConfig() {
             return config;
         }
 
-        FileConfiguration getDConfig() { return dconfig; }
+        FileConfiguration getDConfig() {
+            return dconfig;
+        }
 
         public void saveConfig() {
             try { config.save(ConfigFile);
@@ -60,6 +65,10 @@ public class SettingsManager {
 
         public void reloadConfig() {
             config = YamlConfiguration.loadConfiguration(ConfigFile);
+        }
+
+        public void reloadDChatConfig() {
+            dconfig = YamlConfiguration.loadConfiguration(DChatFile);
         }
 
         private static void copyFile(InputStream in, File out) throws Exception { // https://bukkit.org/threads/extracting-file-from-jar.16962/
