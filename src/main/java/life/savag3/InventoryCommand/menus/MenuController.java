@@ -60,7 +60,7 @@ public class MenuController {
         int count = 0;
         for (String line : lore) {
             String msg = PlaceholderAPI.setPlaceholders(sender, line);
-            String msg2 = PlaceholderAPI.setRelationalPlaceholders(sender, inQuestion, msg);
+            String msg2 = PlaceholderAPI.setRelationalPlaceholders(inQuestion, sender, msg);
             lore.set(count, Strings.color(msg2));
             count++;
         }
